@@ -1,9 +1,10 @@
-pandas
-numpy
-seaborn
-scikit-learn
-catboost
-xgboost
-libomp.dylib
+#pandas
+#numpy
+#seaborn
+#scikit-learn
+#catboost
+#xgboost
+#libomp.dylib
+dill
 #brew install libomp
 #-e .
