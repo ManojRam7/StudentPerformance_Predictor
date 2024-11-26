@@ -28,7 +28,7 @@ class ModelTrainer:
         self.model_trainer_config=ModelTrainerConfig()
 
 
-    def initiate_model_trainer(self,train_array,test_array):
+    def initiate_model_trainer(self, train_array, test_array):
         try:
             logging.info("Split training and test input data")
             X_train,y_train,X_test,y_test=(
@@ -83,8 +83,10 @@ class ModelTrainer:
                     'n_estimators': [8,16,32,64,128,256]
                 }
                 
-            }'''
-            model_report:dict=evaluate_models(X_train=X_train,y_train=y_train,X_test=X_test,y_test=y_test,models=models)
+            }
+            '''
+            model_report:dict=evaluate_models(X_train=X_train,y_train=y_train,X_test=X_test,y_test=y_test,
+                                              models=models)
 
             #model_report:dict=evaluate_models(X_train=X_train,y_train=y_train,X_test=X_test,y_test=y_test,
              #                                models=models,param=params)
