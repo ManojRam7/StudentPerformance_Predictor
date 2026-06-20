@@ -1,46 +1,53 @@
-from flask import Flask,request,render_template
-import numpy as np
-import pandas as pd
+from flask import Flask, render_template, request
 
-from sklearn.preprocessing import StandardScaler
-from src.pipeline.predict_pipeline import CustomData,PredictPipeline
+from src.pipeline.predict_pipeline import CustomData, PredictPipeline
 
-application=Flask(__name__)
 
-app=application
+def create_app() -> Flask:
+    app = Flask(__name__)
 
-## Route for a home page
+    @app.route("/")
+    def index():
+        return render_template("index.html")
 
-@app.route('/')
-def index():
-    return render_template('index.html') 
+    @app.route("/predictdata", methods=["GET", "POST"])
+    def predict_datapoint():
+        if request.method == "GET":
+            return render_template("home.html")
 
-@app.route('/predictdata',methods=['GET','POST'])
-def predict_datapoint():
-    if request.method=='GET':
-        return render_template('home.html')
-    else:
-        data=CustomData(
-            gender=request.form.get('gender'),
-            race_ethnicity=request.form.get('ethnicity'),
-            parental_level_of_education=request.form.get('parental_level_of_education'),
-            lunch=request.form.get('lunch'),
-            test_preparation_course=request.form.get('test_preparation_course'),
-            reading_score=float(request.form.get('reading_score')),
-            writing_score=float(request.form.get('writing_score'))
+        try:
+            reading_score = float(request.form.get("reading_score", 0))
+            writing_score = float(request.form.get("writing_score", 0))
 
-        )
-        pred_df=data.get_data_as_data_frame()
-        print(pred_df)
-        print("Before Prediction")
+            if not (0 <= reading_score <= 100 and 0 <= writing_score <= 100):
+                raise ValueError("Scores must be between 0 and 100.")
 
-        predict_pipeline=PredictPipeline()
-        print("Mid Prediction")
-        results=predict_pipeline.predict(pred_df)
-        print("after Prediction")
-        return render_template('home.html',results=results[0])
-    
+            data = CustomData(
+                gender=request.form.get("gender"),
+                race_ethnicity=request.form.get("ethnicity"),
+                parental_level_of_education=request.form.get(
+                    "parental_level_of_education"
+                ),
+                lunch=request.form.get("lunch"),
+                test_preparation_course=request.form.get("test_preparation_course"),
+                reading_score=reading_score,
+                writing_score=writing_score,
+            )
 
-if __name__=="__main__":
-    app.run(host="0.0.0.0")        
+            pred_df = data.get_data_as_data_frame()
+            predict_pipeline = PredictPipeline()
+            results = predict_pipeline.predict(pred_df)
+            return render_template("home.html", results=round(float(results[0]), 2))
+        except Exception as exc:
+            return render_template("home.html", error=str(exc))
+
+    return app
+
+
+application = create_app()
+app = application
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
 

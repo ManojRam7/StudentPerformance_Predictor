@@ -1,9 +1,7 @@
+flask
 pandas
 numpy
-seaborn
 scikit-learn
-catboost
-xgboost
-#libomp.dylib
+matplotlib
+seaborn
 dill
-#-e .
